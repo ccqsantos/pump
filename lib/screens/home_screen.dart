@@ -70,16 +70,7 @@ class HomeScreen extends StatelessWidget {
                         ),
                         trailing: const Icon(Icons.chevron_right),
                         onTap: () {
-                          // Por enquanto só um aviso — a tela de detalhe
-                          // pode ser implementada depois.
-                          ScaffoldMessenger.of(context).showSnackBar(
-                            SnackBar(
-                              content: Text(
-                                'Treino: ${treino.nome} '
-                                '(${treino.exercicioIds.length} exercícios)',
-                              ),
-                            ),
-                          );
+                          context.push('/treino-detalhe', extra: treino);
                         },
                       ),
                     );
@@ -88,13 +79,7 @@ class HomeScreen extends StatelessWidget {
               },
             ),
       floatingActionButton: FloatingActionButton(
-        onPressed: () {
-          // Aqui você pode navegar para o formulário de criação:
-          // context.push('/treino-form');
-          ScaffoldMessenger.of(context).showSnackBar(
-            const SnackBar(content: Text('Criar treino — a implementar')),
-          );
-        },
+        onPressed: () => context.push('/treino-form'),
         child: const Icon(Icons.add),
       ),
     );
