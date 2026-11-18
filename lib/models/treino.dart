@@ -4,7 +4,6 @@ class Treino {
   final List<String> exercicioIds;
   final DateTime dataCriacao;
 
-  // Construtor
   Treino({
     this.id,
     required this.nome,

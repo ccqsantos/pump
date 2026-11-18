@@ -19,22 +19,27 @@ class TreinoDetalheScreen extends StatefulWidget {
 }
 
 class _TreinoDetalheScreenState extends State<TreinoDetalheScreen> {
+  // Instãncias para acessar o banco
   final _authService = AuthService();
   final _dbService = DatabaseService();
 
+  // Variáveis que receberão os dados do banco
   Usuario? _usuario;
   List<Exercicio> _exercicios = [];
 
+  // Estados de controle
   bool _loading = true;
   bool _deletando = false;
   String? _erro;
 
+  // Estados de controle
   @override
   void initState() {
     super.initState();
     _carregarDados();
   }
 
+  // Carregar dados inicias da tela
   Future<void> _carregarDados() async {
     final usuarioAtual = _authService.usuarioAtual;
 
@@ -48,6 +53,7 @@ class _TreinoDetalheScreenState extends State<TreinoDetalheScreen> {
       return;
     }
 
+    // Tentar buscar no banco
     try {
       final usuario = await _dbService.buscarPerfil(usuarioAtual.uid);
 
@@ -75,6 +81,7 @@ class _TreinoDetalheScreenState extends State<TreinoDetalheScreen> {
     }
   }
 
+  // Cálculo do MET (Gasto de calorias estimado)
   double get _caloriasEstimadas {
     final peso = _usuario?.pesoKg;
 
@@ -87,6 +94,7 @@ class _TreinoDetalheScreenState extends State<TreinoDetalheScreen> {
     return CalculadoraCalorias.calcular(pesoKg: peso, metsExercicios: mets);
   }
 
+  // Separa a lista de exercícios por categoria
   Map<String, List<Exercicio>> _agruparExercicios() {
     final grupos = <String, List<Exercicio>>{};
 
@@ -97,6 +105,7 @@ class _TreinoDetalheScreenState extends State<TreinoDetalheScreen> {
     return grupos;
   }
 
+  // Lógica de exclusão do treino
   Future<void> _confirmarExclusao() async {
     final confirmar = await showDialog<bool>(
       context: context,
@@ -137,6 +146,7 @@ class _TreinoDetalheScreenState extends State<TreinoDetalheScreen> {
     await _deletarTreino();
   }
 
+  // Tentar deletar pelo banco
   Future<void> _deletarTreino() async {
     final usuario = _authService.usuarioAtual;
 
@@ -169,6 +179,7 @@ class _TreinoDetalheScreenState extends State<TreinoDetalheScreen> {
     }
   }
 
+  // Widget auxiliar para carregar o GIF na tela
   Widget _buildGif(Exercicio exercicio) {
     debugPrint('Carregando GIF: ${exercicio.gifAsset}');
 
@@ -197,6 +208,7 @@ class _TreinoDetalheScreenState extends State<TreinoDetalheScreen> {
       return const Scaffold(body: Center(child: CircularProgressIndicator()));
     }
 
+    // Exibição de erro
     if (_erro != null) {
       return Scaffold(
         appBar: AppBar(title: const Text('Detalhes do treino')),
@@ -209,6 +221,7 @@ class _TreinoDetalheScreenState extends State<TreinoDetalheScreen> {
       );
     }
 
+    // Agrupando os exercícios por macrorregião
     final grupos = _agruparExercicios();
 
     return Scaffold(
@@ -231,6 +244,8 @@ class _TreinoDetalheScreenState extends State<TreinoDetalheScreen> {
           ),
         ],
       ),
+      // Lista dos exercícios contidos nesse treino
+      // e as informações de queima de calorias.
       body: SafeArea(
         child: ListView(
           padding: const EdgeInsets.all(16),
@@ -300,6 +315,7 @@ class _TreinoDetalheScreenState extends State<TreinoDetalheScreen> {
                 ),
               ),
 
+            // Efetivamente separa por macrorregião corporal
             ...grupos.entries.map((grupo) {
               return Card(
                 margin: const EdgeInsets.only(bottom: 16),
@@ -324,6 +340,7 @@ class _TreinoDetalheScreenState extends State<TreinoDetalheScreen> {
 
                           const SizedBox(height: 12),
 
+                          // Título do exercício
                           Text(
                             exercicio.nome,
                             style: const TextStyle(
@@ -359,6 +376,7 @@ class _TreinoDetalheScreenState extends State<TreinoDetalheScreen> {
 
             const SizedBox(height: 16),
 
+            // Informação adicional
             Text(
               'A queima de calorias é uma estimativa baseada no seu peso, no MET de cada exercício e em 10 minutos de atividade por exercício.',
               textAlign: TextAlign.center,

@@ -17,6 +17,7 @@ class TreinoFormScreen extends StatefulWidget {
 }
 
 class _TreinoFormScreenState extends State<TreinoFormScreen> {
+  // Instãncias para acessar o banco
   final _formKey = GlobalKey<FormState>();
   final _nomeController = TextEditingController();
 
@@ -25,11 +26,12 @@ class _TreinoFormScreenState extends State<TreinoFormScreen> {
 
   final Set<String> _exerciciosSelecionados = {};
 
+  // Estados de controle
   bool _salvando = false;
   String? _erro;
-
   bool get _editando => widget.treino != null;
 
+  // Carrega as informações inicias da página
   @override
   void initState() {
     super.initState();
@@ -40,12 +42,14 @@ class _TreinoFormScreenState extends State<TreinoFormScreen> {
     }
   }
 
+  // Libera os controllers (Libera memória)
   @override
   void dispose() {
     _nomeController.dispose();
     super.dispose();
   }
 
+  // Adiciona (ou remove) o exercício da lista de selecionados
   void _alternarExercicio(String id) {
     setState(() {
       if (_exerciciosSelecionados.contains(id)) {
@@ -58,6 +62,7 @@ class _TreinoFormScreenState extends State<TreinoFormScreen> {
     });
   }
 
+  // Salva a criação/alteração no banco
   Future<void> _salvar() async {
     // Validação explícita do nome
     final nome = _nomeController.text.trim();
@@ -103,6 +108,8 @@ class _TreinoFormScreenState extends State<TreinoFormScreen> {
         dataCriacao: widget.treino?.dataCriacao ?? DateTime.now(),
       );
 
+      // Se o estado da página for 'editando', ele utiliza a função atualizar
+      // se não, utiliza criar.
       if (_editando) {
         await _dbService.atualizarTreino(usuario.uid, treino);
       } else {
@@ -134,6 +141,7 @@ class _TreinoFormScreenState extends State<TreinoFormScreen> {
       body: SafeArea(
         child: Form(
           key: _formKey,
+          // Força o Flutter a fazer as validações
           autovalidateMode: AutovalidateMode.onUserInteraction,
           child: Column(
             children: [
@@ -146,6 +154,8 @@ class _TreinoFormScreenState extends State<TreinoFormScreen> {
                       maxLength: 50,
                       inputFormatters: [
                         FilteringTextInputFormatter.allow(
+                          //Permite caracteres considerados letras (com pontuacao até)
+                          //e números. Exclui símbolos.
                           RegExp(r'[\p{L}\p{N}\s]', unicode: true),
                         ),
                       ],
@@ -178,6 +188,7 @@ class _TreinoFormScreenState extends State<TreinoFormScreen> {
                           ),
                         ),
 
+                        // Número de exercícios selecionados
                         Text(
                           '${_exerciciosSelecionados.length} selecionado(s)',
                           style: TextStyle(color: Colors.grey.shade600),
@@ -201,6 +212,7 @@ class _TreinoFormScreenState extends State<TreinoFormScreen> {
                         ),
                       ),
 
+                    // Efetivamente agrupa por macrorregiões os selecionados
                     ...regioes.map((macro) {
                       final exercicios = exerciciosPorMacroRegiao(macro);
 

@@ -10,6 +10,7 @@ class HomeScreen extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
+    // Instãncias para acessar o banco
     final authService = AuthService();
     final dbService = DatabaseService();
     final uid = authService.usuarioAtual?.uid;
@@ -18,11 +19,14 @@ class HomeScreen extends StatelessWidget {
       appBar: AppBar(
         title: const Text('Meus Treinos'),
         actions: [
+          //Botão do Perfil
           IconButton(
             icon: const Icon(Icons.person),
             tooltip: 'Perfil',
             onPressed: () => context.push('/perfil'),
           ),
+
+          //Botão de Logout
           IconButton(
             icon: const Icon(Icons.logout),
             tooltip: 'Sair',
@@ -34,9 +38,12 @@ class HomeScreen extends StatelessWidget {
         ],
       ),
       body: uid == null
+          // Validação para garantir que o usuário não está acessando essa tela sem estar logado.
           ? const Center(child: Text('Usuário não autenticado'))
           : StreamBuilder<List<Treino>>(
+              // Renderiza como Stream os dados de listarTreinos() do banco.
               stream: dbService.listarTreinos(uid),
+              // Snapshot: traz dados. Context: envia dados.
               builder: (context, snapshot) {
                 if (snapshot.connectionState == ConnectionState.waiting) {
                   return const Center(child: CircularProgressIndicator());
@@ -47,6 +54,7 @@ class HomeScreen extends StatelessWidget {
 
                 final treinos = snapshot.data ?? [];
 
+                // Tratamento de erro
                 if (treinos.isEmpty) {
                   return const Center(
                     child: Text(
@@ -78,6 +86,7 @@ class HomeScreen extends StatelessWidget {
                 );
               },
             ),
+      // Botão para ir para treino_form_screen
       floatingActionButton: FloatingActionButton(
         onPressed: () => context.push('/treino-form'),
         child: const Icon(Icons.add),

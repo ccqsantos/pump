@@ -13,6 +13,10 @@ class RegisterScreen extends StatefulWidget {
 }
 
 class _RegisterScreenState extends State<RegisterScreen> {
+  // GlobalKey<FormState> permite o controle global de um form, incluindo todos
+  // os campos. Métodos principais do currentState são validate(), save() e reset().
+  // O validate() ativa os validation: {} de cada elemento do form e faz a validação
+  // de acordo com cada condição.
   final _formKey = GlobalKey<FormState>();
   final _emailController = TextEditingController();
   final _senhaController = TextEditingController();
@@ -23,9 +27,11 @@ class _RegisterScreenState extends State<RegisterScreen> {
   final _authService = AuthService();
   final _dbService = DatabaseService();
 
+  // Estados de controle
   bool _loading = false;
   String? _erro;
 
+  // Libera os controllers (Libera memória)
   @override
   void dispose() {
     _emailController.dispose();

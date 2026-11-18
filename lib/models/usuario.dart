@@ -4,7 +4,6 @@ class Usuario {
   final double pesoKg;
   final double alturaCm;
 
-  // Construtor
   Usuario({
     required this.uid,
     required this.email,

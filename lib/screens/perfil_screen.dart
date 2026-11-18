@@ -13,6 +13,10 @@ class PerfilScreen extends StatefulWidget {
 }
 
 class _PerfilScreenState extends State<PerfilScreen> {
+  // GlobalKey<FormState> permite o controle global de um form, incluindo todos
+  // os campos. Métodos principais do currentState são validate(), save() e reset().
+  // O validate() ativa os validation: {} de cada elemento do form e faz a validação
+  // de acordo com cada condição.
   final _formKey = GlobalKey<FormState>();
   final _pesoController = TextEditingController();
   final _alturaController = TextEditingController();
@@ -20,17 +24,20 @@ class _PerfilScreenState extends State<PerfilScreen> {
   final _authService = AuthService();
   final _dbService = DatabaseService();
 
+  // Estados de controle
   Usuario? _usuario;
   bool _loading = true;
   bool _salvando = false;
   String? _erro;
 
+  // Carrega as informações inicias da página
   @override
   void initState() {
     super.initState();
     _carregarPerfil();
   }
 
+  // Libera os controllers (Libera memória)
   @override
   void dispose() {
     _pesoController.dispose();
@@ -38,6 +45,7 @@ class _PerfilScreenState extends State<PerfilScreen> {
     super.dispose();
   }
 
+  // Carrega as informações do perfil
   Future<void> _carregarPerfil() async {
     final uid = _authService.usuarioAtual?.uid;
     if (uid == null) return;
@@ -57,6 +65,7 @@ class _PerfilScreenState extends State<PerfilScreen> {
     }
   }
 
+  // Salva no banco as alterações
   Future<void> _salvar() async {
     if (!_formKey.currentState!.validate()) return;
 
@@ -88,6 +97,7 @@ class _PerfilScreenState extends State<PerfilScreen> {
     }
   }
 
+  // Deleta o perfil do banco de dados.
   Future<void> _deletarConta() async {
     final confirmar = await showDialog<bool>(
       context: context,
@@ -127,6 +137,8 @@ class _PerfilScreenState extends State<PerfilScreen> {
         throw Exception('Usuário não autenticado.');
       }
 
+      // Para a deleção temos que apagar primeiro o que
+      // depende do perfil para existir no Firestore e no Authentication
       // 1. Apaga perfil + treinos do Firestore
       await _dbService.deletarPerfil(uid);
 
@@ -173,6 +185,7 @@ class _PerfilScreenState extends State<PerfilScreen> {
     }
   }
 
+  // Cálculo do IMC
   double? get _imc {
     if (_usuario == null) return null;
     final alturaM = _usuario!.alturaCm / 100;
@@ -184,12 +197,14 @@ class _PerfilScreenState extends State<PerfilScreen> {
   Widget build(BuildContext context) {
     return Scaffold(
       appBar: AppBar(title: const Text('Meu Perfil')),
+      // Carregando ou não
       body: _loading
           ? const Center(child: CircularProgressIndicator())
           : SafeArea(
               child: Center(
                 child: SingleChildScrollView(
                   padding: const EdgeInsets.all(24),
+                  // Campo de nome
                   child: Form(
                     key: _formKey,
                     child: Column(
@@ -210,6 +225,7 @@ class _PerfilScreenState extends State<PerfilScreen> {
                         ),
                         const SizedBox(height: 24),
 
+                        // Campo que mostra o IMC, peso e altura
                         if (_imc != null) ...[
                           Card(
                             color: Colors.orange.shade50,
@@ -237,6 +253,7 @@ class _PerfilScreenState extends State<PerfilScreen> {
                           const SizedBox(height: 24),
                         ],
 
+                        // Campo de editar peso e altura se clicar em Editar
                         TextFormField(
                           controller: _pesoController,
                           keyboardType: const TextInputType.numberWithOptions(
@@ -260,6 +277,7 @@ class _PerfilScreenState extends State<PerfilScreen> {
                         ),
                         const SizedBox(height: 16),
 
+                        // Campo de altura
                         TextFormField(
                           controller: _alturaController,
                           keyboardType: const TextInputType.numberWithOptions(
@@ -293,6 +311,7 @@ class _PerfilScreenState extends State<PerfilScreen> {
                             ),
                           ),
 
+                        // Campo de Salvar
                         SizedBox(
                           height: 50,
                           child: ElevatedButton(

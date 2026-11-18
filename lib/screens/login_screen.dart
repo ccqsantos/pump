@@ -11,14 +11,17 @@ class LoginScreen extends StatefulWidget {
 }
 
 class _LoginScreenState extends State<LoginScreen> {
+  // Instãncias para acessar o banco
   final _formKey = GlobalKey<FormState>();
   final _emailController = TextEditingController();
   final _senhaController = TextEditingController();
   final _authService = AuthService();
 
+  // Estados de controle
   bool _loading = false;
   String? _erro;
 
+  // Libera os controllers (Libera memória)
   @override
   void dispose() {
     _emailController.dispose();
@@ -26,7 +29,9 @@ class _LoginScreenState extends State<LoginScreen> {
     super.dispose();
   }
 
+  // Loga de maneira assíncrona pois precisa consultar o banco se o hash corresponde.
   Future<void> _entrar() async {
+    // Garante que a validação é necessária.
     if (!_formKey.currentState!.validate()) return;
 
     setState(() {
@@ -58,6 +63,8 @@ class _LoginScreenState extends State<LoginScreen> {
               key: _formKey,
               child: Column(
                 crossAxisAlignment: CrossAxisAlignment.stretch,
+                //O Image.asset só funciona se o caminho for conhecido e a imagem tiver
+                //disponível localmente.
                 children: [
                   Image.asset('assets/favicon.png', height: 134, width: 134),
                   const SizedBox(height: 8),
@@ -68,6 +75,7 @@ class _LoginScreenState extends State<LoginScreen> {
                   ),
                   const SizedBox(height: 32),
 
+                  // Campo de email
                   TextFormField(
                     controller: _emailController,
                     keyboardType: TextInputType.emailAddress,
@@ -85,6 +93,7 @@ class _LoginScreenState extends State<LoginScreen> {
                   ),
                   const SizedBox(height: 16),
 
+                  // Campo de senha
                   TextFormField(
                     controller: _senhaController,
                     obscureText: true,
