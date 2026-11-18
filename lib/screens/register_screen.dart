@@ -151,7 +151,8 @@ class _RegisterScreenState extends State<RegisterScreen> {
                       if (value == null || value.isEmpty)
                         return 'Informe o peso';
                       final peso = double.tryParse(value.replaceAll(',', '.'));
-                      if (peso == null || peso <= 0) return 'Peso inválido';
+                      if (peso == null || peso <= 0 || peso > 700)
+                        return 'Peso inválido';
                       return null;
                     },
                   ),
@@ -172,7 +173,7 @@ class _RegisterScreenState extends State<RegisterScreen> {
                       final altura = double.tryParse(
                         value.replaceAll(',', '.'),
                       );
-                      if (altura == null || altura <= 0)
+                      if (altura == null || altura <= 0 || altura > 280)
                         return 'Altura inválida';
                       return null;
                     },

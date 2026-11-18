@@ -253,7 +253,7 @@ class _PerfilScreenState extends State<PerfilScreen> {
                             final peso = double.tryParse(
                               value.replaceAll(',', '.'),
                             );
-                            if (peso == null || peso <= 0)
+                            if (peso == null || peso <= 0 || peso > 300)
                               return 'Peso inválido';
                             return null;
                           },
@@ -276,7 +276,7 @@ class _PerfilScreenState extends State<PerfilScreen> {
                             final altura = double.tryParse(
                               value.replaceAll(',', '.'),
                             );
-                            if (altura == null || altura <= 0)
+                            if (altura == null || altura <= 0 || altura > 280)
                               return 'Altura inválida';
                             return null;
                           },

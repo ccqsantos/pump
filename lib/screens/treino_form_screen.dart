@@ -1,4 +1,5 @@
 import 'package:flutter/material.dart';
+import 'package:flutter/services.dart';
 import 'package:go_router/go_router.dart';
 
 import '../models/treino.dart';
@@ -142,6 +143,12 @@ class _TreinoFormScreenState extends State<TreinoFormScreen> {
                   children: [
                     TextFormField(
                       controller: _nomeController,
+                      maxLength: 50,
+                      inputFormatters: [
+                        FilteringTextInputFormatter.allow(
+                          RegExp(r'[\p{L}\p{N}\s]', unicode: true),
+                        ),
+                      ],
                       decoration: const InputDecoration(
                         labelText: 'Nome do treino',
                         hintText: 'Ex.: Treino A - Peito',
