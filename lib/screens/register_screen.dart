@@ -154,11 +154,13 @@ class _RegisterScreenState extends State<RegisterScreen> {
                       border: OutlineInputBorder(),
                     ),
                     validator: (value) {
-                      if (value == null || value.isEmpty)
+                      if (value == null || value.isEmpty) {
                         return 'Informe o peso';
+                      }
                       final peso = double.tryParse(value.replaceAll(',', '.'));
-                      if (peso == null || peso <= 0 || peso > 700)
+                      if (peso == null || peso <= 0 || peso > 700) {
                         return 'Peso inválido';
+                      }
                       return null;
                     },
                   ),
@@ -174,13 +176,15 @@ class _RegisterScreenState extends State<RegisterScreen> {
                       border: OutlineInputBorder(),
                     ),
                     validator: (value) {
-                      if (value == null || value.isEmpty)
+                      if (value == null || value.isEmpty) {
                         return 'Informe a altura';
+                      }
                       final altura = double.tryParse(
                         value.replaceAll(',', '.'),
                       );
-                      if (altura == null || altura <= 0 || altura > 280)
+                      if (altura == null || altura <= 0 || altura > 280) {
                         return 'Altura inválida';
+                      }
                       return null;
                     },
                   ),
