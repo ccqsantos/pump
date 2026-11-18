@@ -90,8 +90,9 @@ class _PerfilScreenState extends State<PerfilScreen> {
       }
     } catch (e) {
       debugPrint('ERRO AO SALVAR PERFIL: $e');
-      if (mounted)
+      if (mounted) {
         setState(() => _erro = 'Não foi possível salvar. Tente novamente.');
+      }
     } finally {
       if (mounted) setState(() => _salvando = false);
     }
@@ -265,13 +266,15 @@ class _PerfilScreenState extends State<PerfilScreen> {
                             border: OutlineInputBorder(),
                           ),
                           validator: (value) {
-                            if (value == null || value.isEmpty)
+                            if (value == null || value.isEmpty) {
                               return 'Informe o peso';
+                            }
                             final peso = double.tryParse(
                               value.replaceAll(',', '.'),
                             );
-                            if (peso == null || peso <= 0 || peso > 300)
+                            if (peso == null || peso <= 0 || peso > 300) {
                               return 'Peso inválido';
+                            }
                             return null;
                           },
                         ),
@@ -289,13 +292,15 @@ class _PerfilScreenState extends State<PerfilScreen> {
                             border: OutlineInputBorder(),
                           ),
                           validator: (value) {
-                            if (value == null || value.isEmpty)
+                            if (value == null || value.isEmpty) {
                               return 'Informe a altura';
+                            }
                             final altura = double.tryParse(
                               value.replaceAll(',', '.'),
                             );
-                            if (altura == null || altura <= 0 || altura > 280)
+                            if (altura == null || altura <= 0 || altura > 280) {
                               return 'Altura inválida';
+                            }
                             return null;
                           },
                         ),
