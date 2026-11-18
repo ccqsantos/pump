@@ -59,11 +59,7 @@ class _LoginScreenState extends State<LoginScreen> {
               child: Column(
                 crossAxisAlignment: CrossAxisAlignment.stretch,
                 children: [
-                  const Icon(
-                    Icons.fitness_center,
-                    size: 64,
-                    color: Colors.orange,
-                  ),
+                  Image.asset('assets/favicon.png', height: 134, width: 134),
                   const SizedBox(height: 8),
                   const Text(
                     'Pump',

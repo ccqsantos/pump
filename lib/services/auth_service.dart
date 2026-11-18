@@ -44,6 +44,16 @@ class AuthService extends ChangeNotifier {
     await _auth.signOut();
   }
 
+  Future<void> deletarConta() async {
+    final user = _auth.currentUser;
+
+    if (user == null) {
+      throw Exception('Usuário não autenticado.');
+    }
+
+    await user.delete();
+  }
+
   String _traduzErro(FirebaseAuthException e) {
     switch (e.code) {
       case 'user-not-found':

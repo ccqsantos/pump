@@ -58,10 +58,21 @@ class _TreinoFormScreenState extends State<TreinoFormScreen> {
   }
 
   Future<void> _salvar() async {
+    // Validação explícita do nome
+    final nome = _nomeController.text.trim();
+
+    if (nome.isEmpty) {
+      _formKey.currentState?.validate();
+
+      return;
+    }
+
+    // Validação dos campos do Form
     if (!_formKey.currentState!.validate()) {
       return;
     }
 
+    // Validação dos exercícios
     if (_exerciciosSelecionados.isEmpty) {
       setState(() {
         _erro = 'Selecione pelo menos um exercício.';
@@ -86,7 +97,7 @@ class _TreinoFormScreenState extends State<TreinoFormScreen> {
     try {
       final treino = Treino(
         id: widget.treino?.id,
-        nome: _nomeController.text.trim(),
+        nome: nome,
         exercicioIds: _exerciciosSelecionados.toList(),
         dataCriacao: widget.treino?.dataCriacao ?? DateTime.now(),
       );
@@ -122,6 +133,7 @@ class _TreinoFormScreenState extends State<TreinoFormScreen> {
       body: SafeArea(
         child: Form(
           key: _formKey,
+          autovalidateMode: AutovalidateMode.onUserInteraction,
           child: Column(
             children: [
               Expanded(

@@ -17,6 +17,25 @@ class DatabaseService {
     return Usuario.fromMap(uid, doc.data()!);
   }
 
+  Future<void> deletarPerfil(String uid) async {
+    final usuarioRef = _db.collection('usuarios').doc(uid);
+
+    // Primeiro apaga os treinos do usuário
+    final treinos = await usuarioRef.collection('treinos').get();
+
+    // Batch permite apagar vários documentos de uma vez
+    final batch = _db.batch();
+
+    for (final treino in treinos.docs) {
+      batch.delete(treino.reference);
+    }
+
+    // Depois apaga o documento do perfil
+    batch.delete(usuarioRef);
+
+    await batch.commit();
+  }
+
   // --- CRUD de Treinos (vinculado ao uid) ---
   Future<void> criarTreino(String uid, Treino treino) {
     return _db

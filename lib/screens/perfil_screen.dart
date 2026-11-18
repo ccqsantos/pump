@@ -1,3 +1,4 @@
+import 'package:firebase_auth/firebase_auth.dart';
 import 'package:flutter/material.dart';
 
 import '../models/usuario.dart';
@@ -84,6 +85,91 @@ class _PerfilScreenState extends State<PerfilScreen> {
         setState(() => _erro = 'Não foi possível salvar. Tente novamente.');
     } finally {
       if (mounted) setState(() => _salvando = false);
+    }
+  }
+
+  Future<void> _deletarConta() async {
+    final confirmar = await showDialog<bool>(
+      context: context,
+      builder: (context) {
+        return AlertDialog(
+          title: const Text('Excluir conta?'),
+          content: const Text(
+            'Esta ação excluirá sua conta, seu perfil e todos os seus treinos. '
+            'Essa ação não pode ser desfeita.',
+          ),
+          actions: [
+            TextButton(
+              onPressed: () => Navigator.pop(context, false),
+              child: const Text('Cancelar'),
+            ),
+            FilledButton(
+              style: FilledButton.styleFrom(backgroundColor: Colors.red),
+              onPressed: () => Navigator.pop(context, true),
+              child: const Text('Excluir'),
+            ),
+          ],
+        );
+      },
+    );
+
+    if (confirmar != true) return;
+
+    setState(() {
+      _salvando = true;
+      _erro = null;
+    });
+
+    try {
+      final uid = _authService.usuarioAtual?.uid;
+
+      if (uid == null) {
+        throw Exception('Usuário não autenticado.');
+      }
+
+      // 1. Apaga perfil + treinos do Firestore
+      await _dbService.deletarPerfil(uid);
+
+      // 2. Apaga a conta do Firebase Authentication
+      await _authService.deletarConta();
+
+      if (!mounted) return;
+
+      ScaffoldMessenger.of(context).showSnackBar(
+        const SnackBar(content: Text('Conta excluída com sucesso.')),
+      );
+
+      // O AuthService / GoRouter deve detectar o logout
+      // e redirecionar para /login.
+    } on FirebaseAuthException catch (e) {
+      debugPrint('ERRO AO EXCLUIR CONTA: ${e.code}');
+
+      if (!mounted) return;
+
+      setState(() {
+        _salvando = false;
+      });
+
+      String mensagem;
+
+      if (e.code == 'requires-recent-login') {
+        mensagem =
+            'Por segurança, faça login novamente antes de excluir sua conta.';
+      } else {
+        mensagem = 'Não foi possível excluir a conta.';
+      }
+
+      ScaffoldMessenger.of(context)
+          .showSnackBar(SnackBar(content: Text(mensagem)));
+    } catch (e) {
+      debugPrint('ERRO AO EXCLUIR CONTA: $e');
+
+      if (!mounted) return;
+
+      setState(() {
+        _salvando = false;
+        _erro = 'Não foi possível excluir a conta. Tente novamente.';
+      });
     }
   }
 
@@ -231,6 +317,18 @@ class _PerfilScreenState extends State<PerfilScreen> {
                           },
                           icon: const Icon(Icons.logout),
                           label: const Text('Sair'),
+                        ),
+
+                        const SizedBox(height: 12),
+
+                        OutlinedButton.icon(
+                          onPressed: _salvando ? null : _deletarConta,
+                          icon: const Icon(Icons.delete_forever),
+                          label: const Text('Excluir minha conta'),
+                          style: OutlinedButton.styleFrom(
+                            foregroundColor: Colors.red,
+                            side: const BorderSide(color: Colors.red),
+                          ),
                         ),
                       ],
                     ),
