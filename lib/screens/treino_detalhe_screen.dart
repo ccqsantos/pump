@@ -283,13 +283,20 @@ class _TreinoDetalheScreenState extends State<TreinoDetalheScreen> {
                       )
                     else
                       const Text('Perfil de peso não encontrado.'),
-                    const SizedBox(height: 8),
+                    const SizedBox(height: 3),
                     Text(
                       '${_exercicios.length} exercício(s) • '
-                      '10 min por exercício',
+                      '${widget.treino.tempoTreino}min de treino ',
                       style: TextStyle(
                         fontSize: 12,
                         color: Colors.grey.shade600,
+                      ),
+                    ),
+                    Text(
+                      'em média 10min por exercício - padrão 3 séries de 12',
+                      style: TextStyle(
+                        fontSize: 8,
+                        color: const Color.fromARGB(255, 134, 134, 134),
                       ),
                     ),
                   ],

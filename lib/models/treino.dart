@@ -1,6 +1,7 @@
 class Treino {
   final String? id;
   final String nome;
+  final int tempoTreino;
   final List<String> exercicioIds;
   final DateTime dataCriacao;
 
@@ -9,6 +10,7 @@ class Treino {
     required this.nome,
     required this.exercicioIds,
     required this.dataCriacao,
+    required this.tempoTreino,
   });
 
   // Map para mandar pro db
@@ -16,6 +18,7 @@ class Treino {
     'nome': nome,
     'exercicioIds': exercicioIds,
     'dataCriacao': dataCriacao.toIso8601String(),
+    'tempoTreino': tempoTreino,
   };
 
   // "Construtor" do map
@@ -26,5 +29,6 @@ class Treino {
     dataCriacao: DateTime.parse(
       map['dataCriacao'] ?? DateTime.now().toIso8601String(),
     ),
+    tempoTreino: map['tempoTreino'] ?? 0,
   );
 }

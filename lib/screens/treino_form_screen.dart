@@ -20,6 +20,7 @@ class _TreinoFormScreenState extends State<TreinoFormScreen> {
   // Instãncias para acessar o banco
   final _formKey = GlobalKey<FormState>();
   final _nomeController = TextEditingController();
+  final _tempoController = TextEditingController();
 
   final _authService = AuthService();
   final _dbService = DatabaseService();
@@ -66,8 +67,16 @@ class _TreinoFormScreenState extends State<TreinoFormScreen> {
   Future<void> _salvar() async {
     // Validação explícita do nome
     final nome = _nomeController.text.trim();
+    final tempoTreino = _tempoController.text.trim();
+    int tempoTreinoInt = int.parse(tempoTreino);
 
     if (nome.isEmpty) {
+      _formKey.currentState?.validate();
+
+      return;
+    }
+
+    if (tempoTreinoInt <= 0) {
       _formKey.currentState?.validate();
 
       return;
@@ -106,6 +115,7 @@ class _TreinoFormScreenState extends State<TreinoFormScreen> {
         nome: nome,
         exercicioIds: _exerciciosSelecionados.toList(),
         dataCriacao: widget.treino?.dataCriacao ?? DateTime.now(),
+        tempoTreino: tempoTreinoInt,
       );
 
       // Se o estado da página for 'editando', ele utiliza a função atualizar
@@ -168,6 +178,32 @@ class _TreinoFormScreenState extends State<TreinoFormScreen> {
                       validator: (value) {
                         if (value == null || value.trim().isEmpty) {
                           return 'Informe o nome do treino';
+                        }
+
+                        return null;
+                      },
+                    ),
+
+                    const SizedBox(height: 20),
+
+                    TextFormField(
+                      controller: _tempoController,
+                      maxLength: 50,
+                      inputFormatters: [
+                        FilteringTextInputFormatter.allow(
+                          //Permite apenas números
+                          RegExp(r'^-?\d+([.,]\d+)?$', unicode: true),
+                        ),
+                      ],
+                      decoration: const InputDecoration(
+                        labelText: 'Tempo de treino (em min)',
+                        hintText: 'Ex.: 60',
+                        prefixIcon: Icon(Icons.punch_clock),
+                        border: OutlineInputBorder(),
+                      ),
+                      validator: (value) {
+                        if (value == null || value.trim().isEmpty) {
+                          return 'Informe o tempo do treino';
                         }
 
                         return null;
